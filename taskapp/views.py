@@ -22,7 +22,7 @@ class CreateUserAPI(CreateAPIView):
                 continue
 
             if field == 'avatar':
-                if field is None:
+                if request.data['avatar'] == '' or request.data['avatar'] is None:
                     s, v = False, {'error': 'blank'}
                 else:
                     file_name = request.data['avatar'].name.split('.')[-1]
@@ -46,18 +46,16 @@ class CreateUserAPI(CreateAPIView):
             return Response(errors_dict, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ObtainAuthToken(APIView):
-    throttle_classes = ()
-    permission_classes = ()
+class ObtainAuthToken(CreateAPIView):
+    serializer_class = AuthTokenSerializer
     parser_classes = (
         parsers.FormParser,
         parsers.MultiPartParser,
         parsers.JSONParser,
     )
+    renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
 
-    renderer_classes = (renderers.JSONRenderer,)
-
-    def post(self, request):
+    def post(self, request, **kwargs):
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -76,7 +74,7 @@ class CreateStatusAPI(CreateAPIView):
     def post(self, request, *args, **kwargs):
         user = Token.objects.filter(key=request.data['token']).first()
         if not user:
-            return Response({'error': 'auth-token or phone number'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invalid auth-token or phone number'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             if user.user.phone_number != request.data['phone_number']:
                 return Response({'error': 'Invalid auth-token or phone number'}, status=status.HTTP_401_UNAUTHORIZED)

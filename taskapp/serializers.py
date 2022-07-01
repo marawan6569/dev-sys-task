@@ -37,7 +37,7 @@ class AuthTokenSerializer(serializers.Serializer):
                 raise exceptions.ValidationError(msg)
         else:
             msg = 'Must include "phone_number" and "password"'
-            raise exceptions.ValidationError(msg)
+            raise Exception(msg)
 
         attrs['user'] = user
         return attrs
