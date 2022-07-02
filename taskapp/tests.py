@@ -67,8 +67,10 @@ class APIViewsTest(APITestCase):
         response = self.client.post('/api/create/', data={'avatar': ''})
         self.assertEqual(response.status_code, 400)
 
-    # def test_token_creation(self):
+    # def test_token_creation_success(self):
     #     user = self.create_user()
+    #     user.is_active = True
+    #     user.save()
     #     response = self.client.post('/api/login/',
     #                                 data={'phone_number': '+01012345678', 'password': 'abcd123'}
     #                                 )
@@ -77,14 +79,56 @@ class APIViewsTest(APITestCase):
     #     print(50 * '-')
     #     self.assertEqual(response.status_code, 200)
 
-    # def test_status_creation(self):
-    #     user, token = self.create_token()
-    #     response = self.client.post('/api/status/', data={
-    #         'token': token,
-    #         'status': 'active',
-    #         'phone_number': user.phone_number
-    #     })
-    #     self.assertEqual(response.status_code, 200)
+    def test_token_creation_failed_invalid_data(self):
+        user = self.create_user()
+        user.is_active = True
+        user.save()
+        response = self.client.post('/api/login/',
+                                    data={'phone_number': '+123', 'password': 'abcd123'}
+                                    )
+        self.assertEqual(response.status_code, 400)
+
+    def test_token_creation_failed_no_data(self):
+        user = self.create_user()
+        user.is_active = True
+        user.save()
+        response = self.client.post('/api/login/')
+        self.assertEqual(response.status_code, 400)
+
+    def test_status_creation_success(self):
+        user, token = self.create_token()
+        response = self.client.post('/api/status/', data={
+            'token': token[0],
+            'status': 'active',
+            'phone_number': user.phone_number
+        })
+        self.assertEqual(response.status_code, 201)
+
+    def test_status_creation_failed_in_token_validation(self):
+        response = self.client.post('/api/status/', data={
+            'token': 'no_token',
+            'status': 'active',
+            'phone_number': 'no_phone'
+        })
+        self.assertEqual(response.status_code, 401)
+
+    def test_status_creation_failed_in_phone_validation(self):
+        user, token = self.create_token()
+        response = self.client.post('/api/status/', data={
+            'token': token[0],
+            'status': 'active',
+            'phone_number': 'no_phone'
+        })
+        self.assertEqual(response.status_code, 401)
+
+    def test_status_creation_failed_in_creation(self):
+        user, token = self.create_token()
+        response = self.client.post('/api/status/', data={
+            'token': token[0],
+            'status': '',
+            'phone_number': user.phone_number
+        })
+        self.assertEqual(response.status_code, 400)
 
 
 class ValidatorTest(TestCase):
