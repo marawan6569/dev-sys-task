@@ -19,7 +19,7 @@ pip3 install -r requirements.txt
 ```
 
 ```
-coverage run manage.py test
+coverage run manage.py test or python3 manage.py test
 ```
 
 ```
