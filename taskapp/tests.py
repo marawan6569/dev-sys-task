@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from random import randint
 from .models import User, Status
@@ -43,11 +44,11 @@ class ModelsTest(TestCase):
         self.assertEqual(status.__str__(), f'{status.user} => ({status.status})')
 
 
-class APIViewsTest(TestCase):
+class APIViewsTest(APITestCase):
 
     @staticmethod
     def create_user():
-        return User.objects.create(**_user_template)
+        return User.objects.create(**{**_user_template, 'phone_number': '+01012345678'})
 
     @staticmethod
     def create_token():
@@ -62,11 +63,18 @@ class APIViewsTest(TestCase):
         response = self.client.post('/api/create/', data={**_user_template, 'avatar': invalid_image})
         self.assertEqual(response.status_code, 400)
 
+    def test_check_avatar_is_blank(self):
+        response = self.client.post('/api/create/', data={'avatar': ''})
+        self.assertEqual(response.status_code, 400)
+
     # def test_token_creation(self):
     #     user = self.create_user()
     #     response = self.client.post('/api/login/',
-    #                                 data={'phone_number': user.phone_number, 'password': user.password}
+    #                                 data={'phone_number': '+01012345678', 'password': 'abcd123'}
     #                                 )
+    #     print(50 * '-')
+    #     print(response)
+    #     print(50 * '-')
     #     self.assertEqual(response.status_code, 200)
 
     # def test_status_creation(self):
@@ -80,6 +88,10 @@ class APIViewsTest(TestCase):
 
 
 class ValidatorTest(TestCase):
+
+    @staticmethod
+    def create_user():
+        return User.objects.create(**{**_user_template, 'email': 'check@not.av'})
 
     def test_too_long_phone(self):
         phone = '+000000000000000'
@@ -98,3 +110,21 @@ class ValidatorTest(TestCase):
         self.assertEqual(value, email)
         _, value = Validator._is_email(value=not_email)
         self.assertEqual(value, {'error': 'invalid'})
+
+    def test_is_blank_checker(self):
+        _, value = Validator(field_name='first_name', value='', model=User)
+        self.assertEqual(value, {'error': 'blank'})
+
+    def test_blank_email(self):
+        _, value = Validator(field_name='email', value='', model=User)
+        self.assertEqual(value, None)
+
+    def test_check_if_email_is_available(self):
+        email = 'email@user.com'
+        _, value = Validator(field_name='email', value=email, model=User)
+        self.assertEqual(value, email)
+
+    def test_check_if_email_is_not_available(self):
+        _, value = Validator(field_name='email', value='test.not.email', model=User)
+        self.assertEqual(value, {"error": "invalid"})
+
