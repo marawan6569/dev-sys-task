@@ -13,6 +13,9 @@ from .serializers import (
 
 
 class CreateUserAPI(CreateAPIView):
+    """
+    Create user
+    """
     serializer_class = CreateUserSerializer
 
     def post(self, request, *args, **kwargs):
@@ -47,6 +50,9 @@ class CreateUserAPI(CreateAPIView):
 
 
 class ObtainAuthToken(CreateAPIView):
+    """
+    login and return a token
+    """
     serializer_class = AuthTokenSerializer
     parser_classes = (
         parsers.FormParser,
@@ -69,6 +75,9 @@ class ObtainAuthToken(CreateAPIView):
 
 
 class CreateStatusAPI(CreateAPIView):
+    """
+    Create status for user
+    """
     serializer_class = CreateStatusSerializer
 
     def post(self, request, *args, **kwargs):

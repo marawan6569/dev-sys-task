@@ -30,16 +30,16 @@ invalid_image = SimpleUploadedFile('small.gif', small_gif, content_type='image/g
 class ModelsTest(TestCase):
 
     @staticmethod
-    def create_user_user():
+    def create_user():
         return User.objects.create(**_user_template)
 
     def test_user_model(self):
-        user = self.create_user_user()
+        user = self.create_user()
         self.assertEqual(user.username, user.phone_number)
         self.assertEqual(user.__str__(), f'{user.first_name} {user.last_name}')
 
     def test_status_model(self):
-        user = self.create_user_user()
+        user = self.create_user()
         status = Status.objects.create(user=user, status='active')
         self.assertEqual(status.__str__(), f'{status.user} => ({status.status})')
 

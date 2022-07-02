@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Documentation</title>
+</head>
+<body>
+    <style>
+        .container
+        {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            height: 50%;
+            background-color: #eeeeee;
+        }
+
+        .title
+        {
+            font-size: 36px;
+            font-weight: bold;
+            width: calc(100% - 20px);
+            background-color: #222222;
+            text-align: center;
+            color: #eeeeee;
+            padding: 10px;
+        }
+
+        .links
+        {
+            font-weight: bold;
+            font-size: 20px;
+            margin-left: 70px;
+            color: #222222;
+        }
+
+        .links > li
+        {
+            background-color: #d5d5d5;
+            padding: 20px;
+            margin-top: 50px;
+            max-width: 80%;
+        }
+
+        .note
+        {
+            font-size: 20px;
+            margin-left: 100px;
+            margin-top: 50px;
+            text-decoration: underline;
+
+        }
+        .note > span
+        {
+            font-weight: bold;
+            color: #222222;
+        }
+
+
+    </style>
+    <div class="container">
+        <div class="title">
+            API Documentation
+        </div>
+        <ul class="links">
+            <li>
+                Create User
+                <a href="/api/create/">/api/create/</a>
+            </li>
+
+            <li>
+                Login and generate token
+                <a href="/api/login/">/api/login/</a>
+            </li>
+
+            <li>
+                Create Status
+                <a href="/api/status/">/api/status/</a>
+            </li>
+        </ul>
+
+        <div class="note">
+            <span>Note:</span> "curl" converts "+" to "space"
+        </div>
+    </div>
+</body>
+</html>

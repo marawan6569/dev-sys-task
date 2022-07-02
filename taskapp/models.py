@@ -9,10 +9,10 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
     country_code = models.CharField(max_length=3)
-    phone_number = models.CharField(max_length=14, unique=True)
+    phone_number = models.CharField(max_length=14, unique=True, help_text='Must be in E.164 format i.e. +xxxxxxxxxxx')
     gender = models.CharField(max_length=6)
-    birthdate = models.DateField()
-    avatar = models.ImageField(upload_to='avatars/')
+    birthdate = models.DateField(help_text='Must be in format YYYY-MM-DD. Must be in the past')
+    avatar = models.ImageField(upload_to='avatars/', help_text='Supported content types: [jpg, jpeg, png]')
     email = models.EmailField(null=True, blank=True)
     password = models.CharField(max_length=255)
 
